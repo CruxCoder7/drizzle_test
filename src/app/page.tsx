@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { type NeonHttpQueryResult } from "drizzle-orm/neon-http";
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
 import { type JoinedProblems } from "~/server/db/schema";
@@ -18,13 +19,14 @@ export default async function HomePage() {
         Solutions s ON p.id = s.problem_id AND s.user_id = 2;
   `;
 
-  const res: JoinedProblems[] = await db.execute(a);
+  const res: NeonHttpQueryResult<JoinedProblems> = await db.execute(a);
+
   return (
     <main
       className="flex min-h-screen flex-col items-center justify-center 
     bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white"
     >
-      {res.map((d, o) => {
+      {res.rows.map((d, o) => {
         return (
           <p className="text-lg capitalize" key={o}>
             {d.solved ? "t" : "f"}
